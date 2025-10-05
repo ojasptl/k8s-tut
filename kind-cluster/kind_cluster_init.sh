@@ -1,0 +1,1 @@
+kind create cluster --name op-cluster --config=config.yaml
