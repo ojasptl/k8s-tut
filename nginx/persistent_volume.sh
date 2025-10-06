@@ -4,3 +4,4 @@ kubectl apply -f PersistentVolume.yaml
 kubectl get pv
 
 # To create a Persistent Volume Claim
+kubectl apply -f persistent-volume-claim.yaml
