@@ -12,6 +12,9 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 │   └── kind_cluster_init.sh # Script to initialize Kind cluster
 ├── minikube/
 │   └── minikube_install.sh # Script to install Minikube
+├── ingress/               # Ingress controller setup and examples
+│   ├── ingress_setup.sh   # Script to deploy NGINX Ingress Controller
+│   └── ingress-example.yaml # Example Ingress resource
 └── nginx/                  # NGINX-based examples and deployments
     ├── namespace.yaml     # NGINX namespace definition
     ├── pod.yaml          # Basic NGINX pod configuration
@@ -46,6 +49,11 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    - PersistentVolume configuration
    - PersistentVolumeClaim setup
 
+4. **Ingress Controller**
+   - NGINX Ingress Controller deployment
+   - Ingress resource configuration
+   - URL-based routing
+
 ## Key Components
 
 ### Kind Cluster Setup
@@ -75,6 +83,11 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 - DaemonSet management: `nginx/daemonsets.sh`
 - Job management: `nginx/jobs_script.sh`
 - Volume management: `nginx/persistent_volume.sh`
+
+### Ingress Controller Setup
+- `ingress/ingress_setup.sh`: Deploys NGINX Ingress Controller for Kind
+- `ingress/ingress-example.yaml`: Example Ingress configuration
+- `ingress/README.md`: Detailed explanation of Ingress concepts
 
 ## Getting Started
 
@@ -111,6 +124,16 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    ### If command giving error without the
    ```
    sudo -E
+   ```
+
+5. **Deploy Ingress Controller (for Kind)**
+   ```bash
+   cd ingress
+   chmod +x ingress_setup.sh
+   ./ingress_setup.sh
+   
+   # Apply example ingress
+   kubectl apply -f ingress-example.yaml
    ```
 
 ## Prerequisites

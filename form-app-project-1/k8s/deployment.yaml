@@ -4,7 +4,7 @@ metadata:
   name: notes-app-deployment
   labels:
     app: notes-app
-  namespace: notes-app
+  namespace: nginx
 spec:
   replicas: 1
   selector:
@@ -22,4 +22,5 @@ spec:
           image: sanepunk/formops:latest
           ports:
           - containerPort: 8000
+
 
