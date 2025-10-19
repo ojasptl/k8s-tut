@@ -90,11 +90,27 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    ./minikube_install.sh
    ```
 
-2. **Deploy NGINX Examples**
+2. 1. **Deploy NGINX Examples**
    ```bash
    cd nginx
    kubectl apply -f namespace.yaml
    kubectl apply -f deployment.yaml
+   ```
+   2. **To start the service**
+   ```
+   kubectl apply -f service.yaml
+   ```
+3. **To get all services, deployments, etc**
+   ```
+   kubectl get all -n nginx
+   ```
+4. **To forward the port of docker container for accessing the service use the below**
+   ```
+   sudo -E kubectl port-forward service/nginx-service -n nginx 81:80 --address=0.0.0.0
+   ```
+   ### If command giving error without the
+   ```
+   sudo -E
    ```
 
 ## Prerequisites
