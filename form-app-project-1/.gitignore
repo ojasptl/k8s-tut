@@ -1,0 +1,11 @@
+__pycache__/
+.form/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+venv/
+Data/form_submissions.json
+db.txt
+.DS_Store

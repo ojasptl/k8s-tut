@@ -1,0 +1,13 @@
+services:
+  fastapi-form-compose:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fastapi-form-compose
+    
+    volumes:
+      - ./Data:/app/Data
+
+    ports:
+      - "8000:8000"
+  

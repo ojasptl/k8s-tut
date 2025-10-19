@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submission Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .success-message {
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Thank You!</h1>
+    <div class="success-message">
+        <p>Thank you, <strong>{{ name }}</strong>! Your information has been successfully submitted.</p>
+        <p>We have saved your details in our records.</p>
+    </div>    <div>
+        <a href="/">Submit Another Response</a>
+        <span style="margin: 0 10px;">|</span>
+        <a href="/submissions">View All Submissions</a>
+    </div>
+</body>
+</html>

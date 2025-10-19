@@ -1,0 +1,25 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: notes-app-deployment
+  labels:
+    app: notes-app
+  namespace: notes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app
+
+  template:
+    metadata:
+      labels:
+        app: notes-app
+
+    spec:
+      containers:
+        - name: notes-app
+          image: sanepunk/formops:latest
+          ports:
+          - containerPort: 8000
+
