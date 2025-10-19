@@ -136,6 +136,19 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    kubectl apply -f ingress-example.yaml
    ```
 
+6. **Configure Ingress for Multiple Services**
+   ```bash
+   cd nginx
+   kubectl apply -f ingress.yaml
+   
+   # Port-forward the ingress controller
+   kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+   
+   # Access services through ingress
+   curl http://localhost:8080/nginx
+   curl http://localhost:8080/app
+   ```
+
 ## Prerequisites
 - Docker
 - kubectl

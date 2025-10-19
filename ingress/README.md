@@ -67,6 +67,146 @@ spec:
 - `paths`: URL paths that should be routed
 - `backend`: Defines which service and port traffic should be directed to
 
+## Path Types and Routing Strategies
+
+Kubernetes Ingress supports different path types for routing:
+
+### 1. **Prefix Pathtype**
+```yaml
+pathType: Prefix
+path: /app
+```
+- Routes all traffic with URLs starting with the specified prefix
+- Example: `/app`, `/app/`, `/app/users`, etc.
+- Simple but limited for complex routing needs
+
+### 2. **Exact Pathtype**
+```yaml
+pathType: Exact
+path: /app
+```
+- Only matches the exact path specified
+- Example: Only `/app` will match, but not `/app/` or `/app/users`
+- Useful for precise endpoint control
+
+### 3. **ImplementationSpecific Pathtype**
+```yaml
+pathType: ImplementationSpecific
+path: /app
+```
+- Behavior depends on IngressClass controller
+- With NGINX, can be used with regex annotations
+- Most flexible option for complex routing
+
+## Path Rewriting with Annotations
+
+### Simple Root Rewriting
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/rewrite-target: /
+```
+- Rewrites ALL paths to the root path `/`
+- Example: `/app/users` → `/` (loses path information)
+- Simple but limited - good for single-page applications
+
+### Pattern-Based Rewriting
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/use-regex: "true"
+  nginx.ingress.kubernetes.io/rewrite-target: /$1
+path: /app/(.*)
+```
+- Captures parts of the URL with regex groups
+- Example: `/app/users` → `/users`
+- Preserves path information after the prefix
+
+### Advanced Regex Patterns
+```yaml
+annotations:
+  nginx.ingress.kubernetes.io/use-regex: "true"
+  nginx.ingress.kubernetes.io/rewrite-target: /$2
+path: /app(/|$)(.*)
+```
+- Handles trailing slashes correctly
+- `/app` → `/`
+- `/app/` → `/`
+- `/app/users` → `/users`
+
+## Multiple Services Example
+The advanced ingress configuration used in this project:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-notes-ingress
+  namespace: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /nginx
+            backend:
+              service:
+                name: nginx-service
+                port: 
+                  number: 80
+          - pathType: Prefix
+            path: /app
+            backend:
+              service:
+                name: notes-app-service
+                port: 
+                  number: 8000
+```
+
+**Key points:**
+1. Routes `/nginx` to nginx-service
+2. Routes `/app` to notes-app-service
+3. Rewrites all paths to `/` (root path)
+
+## Common Troubleshooting
+
+### 404 Errors for Subpaths
+If your application can access `/app` but not `/app/users`:
+
+1. **Check rewrite configuration**:
+   ```yaml
+   nginx.ingress.kubernetes.io/rewrite-target: /$2
+   path: /app(/|$)(.*)
+   ```
+
+2. **Verify application routing**:
+   - Ensure your app can handle the rewritten paths
+   - Check if your app's router is properly configured
+
+3. **Test path directly**:
+   ```bash
+   kubectl port-forward svc/your-service -n namespace 8000:8000
+   curl localhost:8000/users  # Test direct access
+   ```
+
+### Path Rewriting Debugging Tips
+
+1. **Check ingress controller logs**:
+   ```bash
+   kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
+   ```
+
+2. **Add debug headers**:
+   ```yaml
+   nginx.ingress.kubernetes.io/configuration-snippet: |
+     add_header X-Debug-Path $request_uri;
+   ```
+
+3. **Test with curl**:
+   ```bash
+   curl -v http://localhost/app/users
+   ```
+
 ## Usage Instructions
 
 1. **Deploy the NGINX Ingress Controller:**
@@ -85,52 +225,23 @@ spec:
    kubectl get ingress -n nginx
    ```
 
-4. **Access the Application:**
-
-   For Kind clusters, you can access the application using:
+4. **Port-Forward the Ingress Controller:**
    ```bash
-   # Get the ingress controller's NodePort
-   kubectl get service -n ingress-nginx
+   kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 8080:80
+   ```
+
+5. **Access Your Services:**
+   ```bash
+   # Access nginx service
+   curl http://localhost:8080/nginx
    
-   # Access your service (replace with your port and host)
-   curl -H "Host: nginx.example.com" http://localhost:80
-   ```
-
-## Common Use Cases
-
-1. **Multiple Services on the Same Domain:**
-   ```yaml
-   spec:
-     rules:
-     - host: example.com
-       http:
-         paths:
-         - path: /app1
-           backend: {service: app1-service, port: 80}
-         - path: /app2
-           backend: {service: app2-service, port: 80}
-   ```
-
-2. **Multiple Domains (Virtual Hosting):**
-   ```yaml
-   spec:
-     rules:
-     - host: service1.example.com
-       http: # service1 backend config
-     - host: service2.example.com
-       http: # service2 backend config
-   ```
-
-3. **TLS/SSL Configuration:**
-   ```yaml
-   spec:
-     tls:
-     - hosts:
-       - secure.example.com
-       secretName: tls-secret
+   # Access notes-app service
+   curl http://localhost:8080/app
    ```
 
 ## Notes
 - An Ingress Controller is required for Ingress resources to work
 - Ingress resources won't function without an Ingress Controller installed
 - Kind requires a specific Ingress Controller configuration for proper port binding
+- Consider using Prefix paths with simple rewrites for beginners
+- For complex applications, use regex patterns with capture groups
