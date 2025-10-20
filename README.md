@@ -23,6 +23,14 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 │   ├── configmap-example.yaml  # Example ConfigMap definitions
 │   ├── configmap-usage-pod.yaml # Pod using ConfigMaps
 │   └── configmap-demo.sh   # Demo script for ConfigMaps
+├── secrets/                # Kubernetes Secrets examples
+│   ├── secret-example.yaml # Example Secret definition
+│   └── README.md          # Guide on using Secrets
+└── resources/              # Resource management examples
+    ├── pod-with-resources.yaml # Pod with resource requests/limits
+    ├── resource-quota.yaml # Namespace resource quota example
+    ├── limit-range.yaml   # Default resource limits example
+    └── README.md          # Guide on resource management
 └── nginx/                  # NGINX-based examples and deployments
     ├── namespace.yaml     # NGINX namespace definition
     ├── pod.yaml          # Basic NGINX pod configuration
@@ -74,6 +82,18 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    - Environment variables and volume mounts
    - Dynamic configuration updates
 
+7. **Secrets Management**
+   - Secure storage of sensitive information
+   - Creating and using Secrets
+   - Environment variables and volume mounts
+   - Security best practices
+
+8. **Resource Management**
+   - CPU and memory requests and limits
+   - Quality of Service (QoS) classes
+   - Resource quotas and limit ranges
+   - Monitoring resource usage
+
 ## Key Components
 
 ### Kind Cluster Setup
@@ -118,6 +138,16 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 - `configmaps/configmap-example.yaml`: Various ConfigMap definition examples
 - `configmaps/configmap-usage-pod.yaml`: Pod demonstrating ConfigMap consumption
 - `configmaps/README.md`: Detailed guide on ConfigMap creation and usage
+
+### Secrets Management
+- `secrets/secret-example.yaml`: Example Secret with base64 encoded values
+- `secrets/README.md`: Comprehensive guide on creating and using Secrets
+
+### Resource Management
+- `resources/pod-with-resources.yaml`: Example Pod with resource requests and limits
+- `resources/resource-quota.yaml`: Namespace-level resource quotas
+- `resources/limit-range.yaml`: Default resource limits for containers
+- `resources/README.md`: Detailed guide on Kubernetes resource management
 
 ## Getting Started
 
@@ -218,6 +248,50 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    
    # View ConfigMap contents
    kubectl describe configmap app-config
+   ```
+
+9. **Manage Secrets**
+   ```bash
+   cd secrets
+   
+   # Create Secret from YAML
+   kubectl apply -f secret-example.yaml
+   
+   # Create Secret from literal values
+   kubectl create secret generic db-credentials \
+     --from-literal=username=admin \
+     --from-literal=password=P@ssw0rd
+   
+   # Create Secret from files
+   kubectl create secret generic tls-certs \
+     --from-file=cert.pem \
+     --from-file=key.pem
+   
+   # View Secret (metadata only, not values)
+   kubectl describe secret db-credentials
+   
+   # Extract Secret values
+   kubectl get secret db-credentials -o jsonpath='{.data.username}' | base64 --decode
+   ```
+
+10. **Resource Management**
+   ```bash
+   cd resources
+   
+   # Apply resource examples
+   kubectl apply -f pod-with-resources.yaml
+   kubectl apply -f resource-quota.yaml
+   kubectl apply -f limit-range.yaml
+   
+   # Check resource usage
+   kubectl top pod
+   kubectl top node
+   
+   # Check resource quota status
+   kubectl describe quota compute-quota
+   
+   # View default limits applied by LimitRange
+   kubectl describe limitrange default-limit-range
    ```
 
 ## Prerequisites
