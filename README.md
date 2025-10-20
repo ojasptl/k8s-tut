@@ -15,6 +15,14 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 ├── ingress/               # Ingress controller setup and examples
 │   ├── ingress_setup.sh   # Script to deploy NGINX Ingress Controller
 │   └── ingress-example.yaml # Example Ingress resource
+├── mysql/                  # MySQL StatefulSet examples
+│   ├── statefulsets.yaml  # MySQL StatefulSet configuration
+│   ├── mysql-service.yaml # Headless service for StatefulSet
+│   └── mysql_stateful_demo.sh # Demo script for StatefulSets
+├── configmaps/             # ConfigMap examples and guides
+│   ├── configmap-example.yaml  # Example ConfigMap definitions
+│   ├── configmap-usage-pod.yaml # Pod using ConfigMaps
+│   └── configmap-demo.sh   # Demo script for ConfigMaps
 └── nginx/                  # NGINX-based examples and deployments
     ├── namespace.yaml     # NGINX namespace definition
     ├── pod.yaml          # Basic NGINX pod configuration
@@ -54,6 +62,18 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    - Ingress resource configuration
    - URL-based routing
 
+5. **StatefulSet Applications**
+   - MySQL database deployment
+   - Persistent storage for stateful apps
+   - Headless services for direct pod access
+   - Watch command for real-time monitoring
+   
+6. **Configuration Management**
+   - ConfigMaps for application configuration
+   - Multiple creation methods (files, literals, directories)
+   - Environment variables and volume mounts
+   - Dynamic configuration updates
+
 ## Key Components
 
 ### Kind Cluster Setup
@@ -88,6 +108,16 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
 - `ingress/ingress_setup.sh`: Deploys NGINX Ingress Controller for Kind
 - `ingress/ingress-example.yaml`: Example Ingress configuration
 - `ingress/README.md`: Detailed explanation of Ingress concepts
+
+### StatefulSet Examples
+- `mysql/statefulsets.yaml`: MySQL StatefulSet deployment with persistent storage
+- `mysql/mysql-service.yaml`: Headless service for StatefulSet DNS
+- `mysql/README.md`: Comprehensive guide to StatefulSets and watch commands
+
+### Configuration Management
+- `configmaps/configmap-example.yaml`: Various ConfigMap definition examples
+- `configmaps/configmap-usage-pod.yaml`: Pod demonstrating ConfigMap consumption
+- `configmaps/README.md`: Detailed guide on ConfigMap creation and usage
 
 ## Getting Started
 
@@ -147,6 +177,47 @@ This repository contains a comprehensive set of Kubernetes examples and setup sc
    # Access services through ingress
    curl http://localhost:8080/nginx
    curl http://localhost:8080/app
+   ```
+
+7. **Deploy Stateful Applications with MySQL**
+   ```bash
+   cd mysql
+   
+   # Create namespace and deploy StatefulSet
+   kubectl create namespace mysql
+   kubectl apply -f statefulsets.yaml
+   
+   # Watch pods being created in real-time
+   kubectl get pods -n mysql -w
+   
+   # Deploy headless service for StatefulSet
+   kubectl apply -f mysql-service.yaml
+   
+   # Connect to a specific MySQL instance
+   kubectl exec -it mysql-statefulset-0 -n mysql -- mysql -uroot -proot
+   ```
+   
+8. **Work with ConfigMaps**
+   ```bash
+   cd configmaps
+   
+   # Create ConfigMap from YAML
+   kubectl apply -f configmap-example.yaml
+   
+   # Create ConfigMap from literal values
+   kubectl create configmap literal-config \
+     --from-literal=api.url=https://api.example.com \
+     --from-literal=max.items=100
+     
+   # Create ConfigMap from file
+   echo "server.port=8080" > config.properties
+   kubectl create configmap file-config --from-file=config.properties
+   
+   # Deploy a pod that uses the ConfigMap
+   kubectl apply -f configmap-usage-pod.yaml
+   
+   # View ConfigMap contents
+   kubectl describe configmap app-config
    ```
 
 ## Prerequisites
